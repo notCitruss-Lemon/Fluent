@@ -1,6 +1,6 @@
 return {
 	Name = "Aqua",
-	Accent = Color3.fromRGB(60, 165, 165),
+	Accent = Color3.fromRGB(151, 255, 255),
 
 	AcrylicMain = Color3.fromRGB(20, 20, 20),
 	AcrylicBorder = Color3.fromRGB(50, 100, 100),
