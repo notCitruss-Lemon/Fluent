@@ -31,12 +31,12 @@ return {
 	InputFocused = Color3.fromRGB(20, 10, 30),
 	InputIndicator = Color3.fromRGB(130, 170, 170),
 
-	Dialog = Color3.fromRGB(40, 80, 80),
+	Dialog = Color3.fromRGB(126, 192, 138),
 	DialogHolder = Color3.fromRGB(30, 60, 60),
 	DialogHolderLine = Color3.fromRGB(25, 50, 50),
 	DialogButton = Color3.fromRGB(240, 255, 255),
 	DialogButtonBorder = Color3.fromRGB(80, 110, 110),
-	DialogBorder = Color3.fromRGB(50, 100, 100),
+	DialogBorder = Color3.fromRGB(191, 239, 255),
 	DialogInput = Color3.fromRGB(45, 90, 90),
 	DialogInputLine = Color3.fromRGB(130, 170, 170),
 
