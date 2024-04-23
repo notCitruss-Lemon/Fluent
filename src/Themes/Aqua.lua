@@ -1,14 +1,14 @@
 return {
 	Name = "Aqua",
-	Accent = Color3.fromRGB(60, 165, 165),
+	Accent = Color3.fromRGB(151, 255, 255),
 
-	AcrylicMain = Color3.fromRGB(20, 20, 20),
-	AcrylicBorder = Color3.fromRGB(50, 100, 100),
+	AcrylicMain = Color3.fromRGB(198, 266, 255),
+	AcrylicBorder = Color3.fromRGB(141, 288, 288),
 	AcrylicGradient = ColorSequence.new(Color3.fromRGB(60, 140, 140), Color3.fromRGB(40, 80, 80)),
 	AcrylicNoise = 0.92,
 
-	TitleBarLine = Color3.fromRGB(60, 120, 120),
-	Tab = Color3.fromRGB(140, 180, 180),
+	TitleBarLine = Color3.fromRGB(141, 238, 238),
+	Tab = Color3.fromRGB(121, 205, 205),
 
 	Element = Color3.fromRGB(110, 160, 160),
 	ElementBorder = Color3.fromRGB(40, 70, 70),
@@ -34,7 +34,7 @@ return {
 	Dialog = Color3.fromRGB(40, 80, 80),
 	DialogHolder = Color3.fromRGB(30, 60, 60),
 	DialogHolderLine = Color3.fromRGB(25, 50, 50),
-	DialogButton = Color3.fromRGB(40, 80, 80),
+	DialogButton = Color3.fromRGB(240, 255, 255),
 	DialogButtonBorder = Color3.fromRGB(80, 110, 110),
 	DialogBorder = Color3.fromRGB(50, 100, 100),
 	DialogInput = Color3.fromRGB(45, 90, 90),
