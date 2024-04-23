@@ -10,18 +10,18 @@ return {
 	TitleBarLine = Color3.fromRGB(141, 238, 238),
 	Tab = Color3.fromRGB(121, 205, 205),
 
-	Element = Color3.fromRGB(110, 160, 160),
-	ElementBorder = Color3.fromRGB(40, 70, 70),
-	InElementBorder = Color3.fromRGB(80, 110, 110),
+	Element = Color3.fromRGB(224, 238, 238),
+	ElementBorder = Color3.fromRGB(193, 205, 205),
+	InElementBorder = Color3.fromRGB(135, 206, 235),
 	ElementTransparency = 0.84,
 
 	ToggleSlider = Color3.fromRGB(110, 160, 160),
-	ToggleToggled = Color3.fromRGB(0, 0, 0),
+	ToggleToggled = Color3.fromRGB(0, 154, 205),
 
 	SliderRail = Color3.fromRGB(110, 160, 160),
 
-	DropdownFrame = Color3.fromRGB(160, 200, 200),
-	DropdownHolder = Color3.fromRGB(40, 80, 80),
+	DropdownFrame = Color3.fromRGB(126, 192, 238),
+	DropdownHolder = Color3.fromRGB(0, 191, 255),
 	DropdownBorder = Color3.fromRGB(40, 65, 65),
 	DropdownOption = Color3.fromRGB(110, 160, 160),
 
