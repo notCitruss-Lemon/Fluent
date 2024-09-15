@@ -18,4 +18,16 @@ function Paragraph:New(Config)
 	return Paragraph
 end
 
+function Paragraph:Update(OldParagraph, Title, Content)
+	if OldParagraph.Title ~= Title then
+	OldParagraph.Title = Title
+	end
+	
+	if OldParagraph.Content ~= Content then
+	OldParagraph.Content = Content
+	end
+	
+	return Paragraph
+end
+
 return Paragraph
