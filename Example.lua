@@ -3,12 +3,12 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/d
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Fluent " .. Fluent.Version,
-    SubTitle = "by dawid",
+    Title = "Lemon",
+    SubTitle = "by notCitruss",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
-    Theme = "Dark",
+    Theme = "Lemon",
     MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
 })
 
@@ -22,8 +22,8 @@ local Options = Fluent.Options
 
 do
     Fluent:Notify({
-        Title = "Notification",
-        Content = "This is a notification",
+        Title = "Join Our Discord",
+        Content = "https://discord.gg/u3DdQZSUg5",
         SubContent = "SubContent", -- Optional
         Duration = 5 -- Set to nil to make the notification not disappear
     })
