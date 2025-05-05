@@ -60,6 +60,36 @@ do
             })
         end
     })
+
+    local Toggle = Tabs.Main:AddToggle("MyToggle", { Title = "Infinite Jump", Default = false })
+
+    Toggle:OnChanged(function(Value)
+        MyToggleVariable = Value
+    end)
+    
+    local gameService = game:GetService("UserInputService")
+    local players = game:GetService("Players")
+    local enum = Enum
+
+    gameService.InputBegan:Connect(function(input, gameProcessed)
+        if MyToggleVariable and not gameProcessed and input.KeyCode == enum.KeyCode.Space then
+            local player = players.LocalPlayer
+            if not player then
+                warn("LocalPlayer is not available. Ensure this script is running as a LocalScript.")
+                return
+            end
+    
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:ChangeState(enum.HumanoidStateType.Jumping)
+            else
+                warn("Humanoid not found in character.")
+            end
+        end
+    end)
+    
+    Options.MyToggle:SetValue(false)
 end
 
 -- Addons:
@@ -90,7 +120,7 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 
 Fluent:Notify({
-    Title = "Fluent",
+    Title = "Lemon",
     Content = "The script has been loaded.",
     Duration = 8
 })
