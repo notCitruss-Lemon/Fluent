@@ -7,65 +7,185 @@ local Window = Fluent:CreateWindow({
     SubTitle = "by notCitruss",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
-    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Acrylic = true,
     Theme = "Lemon",
-    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+    MinimizeKey = Enum.KeyCode.LeftControl
 })
 
---Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
 local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
-local Options = Fluent.Options
+local FlySpeed = 50 -- Default fly speed
+local flying = false
+local ctrl = { f = 0, b = 0, l = 0, r = 0 }
+local speed = 0
+local bg, bv = nil, nil
 
-do
-    Fluent:Notify({
-        Title = "Join Our Discord",
-        Content = "https://discord.gg/u3DdQZSUg5",
-        SubContent = "", -- Optional
-        Duration = 5 -- Set to nil to make the notification not disappear
-    })
+-- Notify
+Fluent:Notify({
+    Title = "Join Our Discord",
+    Content = "https://discord.gg/u3DdQZSUg5",
+    Duration = 5
+})
 
-
-
-    Tabs.Main:AddParagraph({
-        Title = "Support Future Projects",
-        Content = "Join the discord!!!"
-    })
-
-
-
-    Tabs.Main:AddButton({
-        Title = "Copy Discord Link",
-        Description = "Copies the Discord Link",
-        Callback = function()
-            Window:Dialog({
-                Title = "Are you sure?",
-                Content = "Will copy Discord Link to your clipboard",
-                Buttons = {
-                    {
-                        Title = "Copy",
-                        Callback = setclipboard("https://discord.gg/u3DdQZSUg5")
-                        
-                    },
-                    {
-                        Title = "Cancel",
-                        Callback = function()
-                            print("Cancelled")
-                        end
-                    }
+Tabs.Main:AddButton({
+    Title = "Copy Discord Link",
+    Description = "Copies the Discord Link",
+    Callback = function()
+        Window:Dialog({
+            Title = "Are you sure?",
+            Content = "Will copy Discord Link to your clipboard",
+            Buttons = {
+                {
+                    Title = "Copy",
+                    Callback = setclipboard("https://discord.gg/u3DdQZSUg5")
+                },
+                {
+                    Title = "Cancel",
+                    Callback = function()
+                        print("Cancelled")
+                    end
                 }
-            })
+            }
+        })
+    end
+})
+
+-- Add Fly Speed Slider
+local SpeedSlider = Tabs.Main:AddSlider("FlySpeedSlider", {
+    Title = "Fly Speed",
+    Description = "Adjust the fly speed",
+    Default = 50,
+    Min = 0,
+    Max = 300,
+    Rounding = 0,
+    Callback = function(Value)
+        FlySpeed = Value
+        print("Fly speed set to:", FlySpeed)
+    end
+})
+
+-- Add Fly Toggle
+local FlyToggle = Tabs.Main:AddToggle("FlyToggle", { Title = "Fly", Default = false })
+
+-- Add Fly Keybind
+local FlyKeybind = Tabs.Main:AddKeybind("FlyKeybind", {
+    Title = "Fly Keybind",
+    Mode = "Toggle",
+    Default = "E",
+    Callback = function(Value)
+        FlyToggle:SetValue(Value) -- Sync the keybind with the toggle
+    end
+})
+
+-- Fly Functionality
+local function StartFly()
+    local plr = game.Players.LocalPlayer
+    local character = plr.Character or plr.CharacterAdded:Wait()
+    local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+    if not torso then
+        warn("Torso or UpperTorso not found!")
+        return
+    end
+
+    bg = Instance.new("BodyGyro", torso)
+    bg.P = 9e4
+    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.cframe = torso.CFrame
+    bv = Instance.new("BodyVelocity", torso)
+    bv.velocity = Vector3.new(0, 0.1, 0)
+    bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+
+    flying = true
+    game.StarterGui:SetCore("SendNotification", { Title = "Fly Activated", Text = "Flying Enabled", Duration = 1 })
+
+    while flying do
+        wait()
+        character.Humanoid.PlatformStand = true
+        if ctrl.f + ctrl.b ~= 0 or ctrl.l + ctrl.r ~= 0 then
+            speed = math.min(speed + 0.5 + (speed / FlySpeed), FlySpeed)
+        else
+            speed = math.max(speed - 1, 0)
         end
-    })
+        bv.velocity = ((game.Workspace.CurrentCamera.CFrame.LookVector * (ctrl.f + ctrl.b)) +
+            ((game.Workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) -
+                game.Workspace.CurrentCamera.CFrame.p)) * speed
+        bg.cframe = game.Workspace.CurrentCamera.CFrame
+    end
+end
 
-local Toggle = Tabs.Main:AddToggle("MyToggle", { Title = "Esp", Default = false })
+local function StopFly()
+    flying = false
+    if bg then bg:Destroy() end
+    if bv then bv:Destroy() end
 
-Toggle:OnChanged(function(Value)
+    local plr = game.Players.LocalPlayer
+    local character = plr.Character or plr.CharacterAdded:Wait()
+    character.Humanoid.PlatformStand = false
+
+    -- Ensure the player lands on their feet
+    character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    game.StarterGui:SetCore("SendNotification", { Title = "Fly Deactivated", Text = "Flying Disabled", Duration = 1 })
+end
+
+FlyToggle:OnChanged(function(Value)
     if Value then
-        -- Enable ESP
+        StartFly()
+    else
+        StopFly()
+    end
+end)
+
+-- Fly Controls
+local mouse = game.Players.LocalPlayer:GetMouse()
+
+mouse.KeyDown:Connect(function(key)
+    if key:lower() == "w" then
+        ctrl.f = 1
+    elseif key:lower() == "s" then
+        ctrl.b = -1
+    elseif key:lower() == "a" then
+        ctrl.l = -1
+    elseif key:lower() == "d" then
+        ctrl.r = 1
+    end
+end)
+
+mouse.KeyUp:Connect(function(key)
+    if key:lower() == "w" then
+        ctrl.f = 0
+    elseif key:lower() == "s" then
+        ctrl.b = 0
+    elseif key:lower() == "a" then
+        ctrl.l = 0
+    elseif key:lower() == "d" then
+        ctrl.r = 0
+    end
+end)
+
+-- Infinite Jump Toggle
+local InfiniteJumpToggle = Tabs.Main:AddToggle("InfiniteJumpToggle", { Title = "Infinite Jump", Default = false })
+InfiniteJumpToggle:OnChanged(function(Value)
+    _G.InfiniteJumpEnabled = Value
+end)
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if _G.InfiniteJumpEnabled and not gameProcessed and input.KeyCode == Enum.KeyCode.Space then
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
+
+-- ESP Toggle
+local ESPToggle = Tabs.Main:AddToggle("ESPToggle", { Title = "ESP", Default = false })
+ESPToggle:OnChanged(function(Value)
+    if Value then
         _G.FriendColor = Color3.fromRGB(0, 0, 255)
         _G.EnemyColor = Color3.fromRGB(255, 0, 0)
         _G.UseTeamColor = true
@@ -121,61 +241,15 @@ Toggle:OnChanged(function(Value)
     end
 end)
 
-    local Toggle = Tabs.Main:AddToggle("MyToggle", { Title = "Infinite Jump", Default = false })
-
-    Toggle:OnChanged(function(Value)
-        MyToggleVariable = Value
-    end)
-    
-    local gameService = game:GetService("UserInputService")
-    local players = game:GetService("Players")
-    local enum = Enum
-
-    gameService.InputBegan:Connect(function(input, gameProcessed)
-        if MyToggleVariable and not gameProcessed and input.KeyCode == enum.KeyCode.Space then
-            local player = players.LocalPlayer
-            if not player then
-                warn("LocalPlayer is not available. Ensure this script is running as a LocalScript.")
-                return
-            end
-    
-            local character = player.Character or player.CharacterAdded:Wait()
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid:ChangeState(enum.HumanoidStateType.Jumping)
-            else
-                warn("Humanoid not found in character.")
-            end
-        end
-    end)
-    
-    Options.MyToggle:SetValue(false)
-end
-
--- Addons:
--- SaveManager (Allows you to have a configuration system)
--- InterfaceManager (Allows you to have a interface managment system)
-
--- Hand the library over to our managers
+-- SaveManager and InterfaceManager
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
-
--- Ignore keys that are used by ThemeManager.
--- (we dont want configs to save themes, do we?)
 SaveManager:IgnoreThemeSettings()
-
--- You can add indexes of elements the save manager should ignore
 SaveManager:SetIgnoreIndexes({})
-
--- use case for doing it this way:
--- a script hub could have themes in a global folder
--- and game configs in a separate folder per game
 InterfaceManager:SetFolder("FluentScriptHub")
 SaveManager:SetFolder("FluentScriptHub/specific-game")
-
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
-
 
 Window:SelectTab(1)
 
@@ -185,6 +259,4 @@ Fluent:Notify({
     Duration = 8
 })
 
--- You can use the SaveManager:LoadAutoloadConfig() to load a config
--- which has been marked to be one that auto loads!
 SaveManager:LoadAutoloadConfig()
