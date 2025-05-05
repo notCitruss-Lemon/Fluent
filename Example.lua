@@ -61,6 +61,66 @@ do
         end
     })
 
+local Toggle = Tabs.Main:AddToggle("MyToggle", { Title = "Esp", Default = false })
+
+Toggle:OnChanged(function(Value)
+    if Value then
+        -- Enable ESP
+        _G.FriendColor = Color3.fromRGB(0, 0, 255)
+        _G.EnemyColor = Color3.fromRGB(255, 0, 0)
+        _G.UseTeamColor = true
+
+        if not _G.ESPFolder then
+            _G.ESPFolder = Instance.new("Folder", game.CoreGui)
+            _G.ESPFolder.Name = "ESP"
+        end
+
+        local function esp(target, color)
+            if target.Character then
+                if not target.Character:FindFirstChild("GetReal") then
+                    local highlight = Instance.new("Highlight")
+                    highlight.Name = "GetReal"
+                    highlight.Adornee = target.Character
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    highlight.FillColor = color
+                    highlight.Parent = target.Character
+                else
+                    target.Character.GetReal.FillColor = color
+                end
+            end
+        end
+
+        local players = game:GetService("Players")
+        local plr = players.LocalPlayer
+
+        _G.ESPConnection = game:GetService("RunService").RenderStepped:Connect(function()
+            for _, v in pairs(players:GetPlayers()) do
+                if v ~= plr then
+                    esp(v, _G.UseTeamColor and v.TeamColor.Color or ((plr.TeamColor == v.TeamColor) and _G.FriendColor or _G.EnemyColor))
+                end
+            end
+        end)
+    else
+        -- Disable ESP
+        if _G.ESPConnection then
+            _G.ESPConnection:Disconnect()
+            _G.ESPConnection = nil
+        end
+
+        if _G.ESPFolder then
+            _G.ESPFolder:Destroy()
+            _G.ESPFolder = nil
+        end
+
+        -- Remove all "GetReal" highlights from characters
+        for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("GetReal") then
+                v.Character.GetReal:Destroy()
+            end
+        end
+    end
+end)
+
     local Toggle = Tabs.Main:AddToggle("MyToggle", { Title = "Infinite Jump", Default = false })
 
     Toggle:OnChanged(function(Value)
