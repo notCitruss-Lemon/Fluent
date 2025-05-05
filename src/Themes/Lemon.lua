@@ -1,5 +1,5 @@
 return {
-	Name = "Rose",
+	Name = "Lemon",
 	Accent = Color3.fromRGB(180, 55, 90),
 
 	AcrylicMain = Color3.fromRGB(40, 40, 40),
